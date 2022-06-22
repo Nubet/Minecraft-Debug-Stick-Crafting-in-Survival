@@ -1,4 +1,4 @@
-#Minecraft-Debug-Stick-Crafting-in-Survival
+# Minecraft-Debug-Stick-Crafting-in-Survival
 Plugin allows to craft "Debug Stick" in survival mode
 
 
@@ -10,5 +10,5 @@ and
 
 First command make that users without OP can use debug stick, and second allows users with survival mode use debug stick
 
-#Crafting
+# Crafting
 ![image](https://user-images.githubusercontent.com/77124888/175134422-a4c1c9c8-3ab6-4693-9fec-0f3cfa30e17e.png)
