@@ -1,0 +1,6 @@
+name: DebugStickCraftingInSurvival
+version: '1.19'
+main: pl.tosupeprzystojniak.nubet.debugstickcraftinginsurvival.DebugStickCraftingInSurvival
+api-version: 1.19
+authors: [ Nubet ]
+description: Plugin allows to craft "Debug Stick" in survival mode
