@@ -45,13 +45,6 @@ public final class DebugStickCraftingInSurvival extends JavaPlugin {
 
     }
 
-
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-        Bukkit.broadcastMessage("DebugStickCraftingInSurvival has STOPPED");
-    }
-
     public FileConfiguration getConfigFile() {
         return config;
     }
