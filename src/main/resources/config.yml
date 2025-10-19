@@ -1,3 +1,23 @@
+# ========================================
+# Debug Stick Crafting in Survival
+# Configuration File
+# ========================================
+
+# Feature toggles
+features:
+  # Enable or disable Debug Stick crafting recipe
+  enable_crafting: true
+
+  # Enable or disable Debug Stick usage restrictions
+  enable_restrictions: true
+
+# Messages shown to players
+messages:
+  # Message shown when a player tries to use Debug Stick on a restricted block
+  restriction: "§cYou cannot use the Debug Stick on this type of block!"
+
+# List of blocks where Debug Stick usage is restricted
+# Add or remove material names as needed
 excluded_blocks:
   - COMPOSTER
   - CACTUS
@@ -20,6 +40,15 @@ excluded_blocks:
   - CHORUS_PLANT
   - SEA_PICKLE
   - RESPAWN_ANCHOR
+  - ACACIA_TRAPDOOR
+  - BIRCH_TRAPDOOR
+  - DARK_OAK_TRAPDOOR
+  - JUNGLE_TRAPDOOR
+  - MANGROVE_TRAPDOOR
+  - OAK_TRAPDOOR
+  - SPRUCE_TRAPDOOR
+  - WARPED_TRAPDOOR
+  - CRIMSON_TRAPDOOR
   - TRIPWIRE_HOOK
   - TURTLE_EGG
   - BEE_NEST
@@ -37,7 +66,7 @@ excluded_blocks:
   - PISTON_HEAD
   - SNOW
   - SCULK_SENSOR
-  - SCULK_SCHRIEKER
+  - SCULK_SHRIEKER
   - ACACIA_SLAB
   - ANDESITE_SLAB
   - BIRCH_SLAB
@@ -51,7 +80,7 @@ excluded_blocks:
   - CUT_SANDSTONE_SLAB
   - DARK_OAK_SLAB
   - DARK_PRISMARINE_SLAB
-  - DEEPSLATE_TITLE_SLAB
+  - DEEPSLATE_TILE_SLAB
   - DIORITE_SLAB
   - END_STONE_BRICK_SLAB
   - EXPOSED_CUT_COPPER_SLAB
@@ -88,3 +117,15 @@ excluded_blocks:
   - WAXED_OXIDIZED_CUT_COPPER_SLAB
   - WAXED_WEATHERED_CUT_COPPER_SLAB
   - WEATHERED_CUT_COPPER_SLAB
+  # 1.20 Cherry
+  - CHERRY_LEAVES
+  - CHERRY_TRAPDOOR
+  - CHERRY_SLAB
+  # 1.20 Bamboo
+  - BAMBOO_TRAPDOOR
+  - BAMBOO_SLAB
+  - BAMBOO_MOSAIC_SLAB
+  # 1.21 Pale Oak
+  - PALE_OAK_LEAVES
+  - PALE_OAK_TRAPDOOR
+  - PALE_OAK_SLAB

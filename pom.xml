@@ -4,51 +4,72 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>pl.ToSupePrzystojniak.Nubet</groupId>
+    <groupId>pl.nubet.debugstickinsurvival</groupId>
     <artifactId>DebugStickCraftingInSurvival</artifactId>
-    <version>1.19</version>
+    <version>2.1-1.21</version>
     <packaging>jar</packaging>
 
     <name>DebugStickCraftingInSurvival</name>
+    <description>Minecraft plugin which allows crafting Debug Stick in survival mode</description>
 
-    <description>Plugin allows to craft "Debug Stick" in survival mode</description>
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <spigot.version>1.21.1-R0.1-SNAPSHOT</spigot.version>
     </properties>
 
     <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.13.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <release>${java.version}</release>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>enforce-java</id>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>enforce</goal>
                         </goals>
                         <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[21,)</version>
+                                </requireJavaVersion>
+                            </rules>
+                            <fail>true</fail>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <includes>
+                    <include>plugin.yml</include>
+                    <include>config.yml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>plugin.yml</exclude>
+                    <exclude>config.yml</exclude>
+                </excludes>
             </resource>
         </resources>
     </build>
@@ -68,14 +89,14 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19-R0.1-SNAPSHOT</version>
+            <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
+            <version>26.0.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

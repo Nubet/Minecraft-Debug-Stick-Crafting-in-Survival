@@ -1,6 +1,20 @@
 name: DebugStickCraftingInSurvival
-version: '1.19'
-main: pl.tosupeprzystojniak.nubet.debugstickcraftinginsurvival.DebugStickCraftingInSurvival
-api-version: 1.19
-authors: [ Nubet ]
-description: Plugin allows to craft "Debug Stick" in survival mode
+main: pl.nubet.debugstickinsurvival.DebugStickCraftingInSurvival
+version: 2.1-1.21
+api-version: 1.21
+authors:
+  - Nubet
+description: Minecraft plugin which allows crafting Debug Stick in survival mode with restrictions.
+website: https://github.com/Nubet/Minecraft-Debug-Stick-Crafting-in-Survival
+
+commands:
+  debugstickreload:
+    description: Reload the plugin configuration.
+    usage: /debugstickreload
+    permission: debugstickcs.reload
+    aliases: [dsreload, debugreload]
+
+permissions:
+  debugstickcs.reload:
+    description: Allows reloading the plugin configuration.
+    default: op
