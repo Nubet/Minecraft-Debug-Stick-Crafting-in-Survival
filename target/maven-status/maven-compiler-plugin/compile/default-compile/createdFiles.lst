@@ -1,6 +1,0 @@
-pl\nubet\debugstickinsurvival\DebugStickCraftingInSurvival.class
-pl\nubet\debugstickinsurvival\command\ReloadCommand.class
-pl\nubet\debugstickinsurvival\listener\DebugStickInteractionListener.class
-pl\nubet\debugstickinsurvival\service\BlockRestrictionService.class
-pl\nubet\debugstickinsurvival\recipe\DebugStickRecipeManager.class
-pl\nubet\debugstickinsurvival\config\ConfigurationManager.class
