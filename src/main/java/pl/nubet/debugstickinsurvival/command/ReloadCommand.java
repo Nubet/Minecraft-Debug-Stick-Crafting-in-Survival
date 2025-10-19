@@ -9,7 +9,8 @@ import pl.nubet.debugstickinsurvival.config.ConfigurationManager;
 /**
  * Handles the /debugstickreload command for reloading plugin configuration.
  */
-public class ReloadCommand implements CommandExecutor {
+public class ReloadCommand implements CommandExecutor
+{
 
     private final ConfigurationManager configurationManager;
 
@@ -19,7 +20,7 @@ public class ReloadCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
-                           @NotNull String label, @NotNull String[] args) {
+        @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("debugstickcs.reload")) {
             sender.sendMessage("§cYou don't have permission to reload this plugin.");
             return true;

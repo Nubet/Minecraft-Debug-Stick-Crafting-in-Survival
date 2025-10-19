@@ -7,7 +7,8 @@ import pl.nubet.debugstickinsurvival.config.ConfigurationManager;
 /**
  * Service responsible for determining if Debug Stick usage is restricted on specific blocks.
  */
-public class BlockRestrictionService {
+public class BlockRestrictionService
+{
 
     private final ConfigurationManager configurationManager;
 

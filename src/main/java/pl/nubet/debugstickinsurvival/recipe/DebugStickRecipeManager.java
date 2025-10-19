@@ -13,7 +13,8 @@ import java.util.logging.Level;
 /**
  * Manages the registration and unregistration of Debug Stick crafting recipes.
  */
-public class DebugStickRecipeManager {
+public class DebugStickRecipeManager
+{
 
     private static final String RECIPE_KEY = "debug_stick_crafting";
 
@@ -54,9 +55,9 @@ public class DebugStickRecipeManager {
         ShapedRecipe recipe = new ShapedRecipe(recipeKey, debugStick);
 
         recipe.shape(
-                "  S",
-                "NP ",
-                "PN "
+            "  S",
+            "NP ",
+            "PN "
         );
 
         recipe.setIngredient('N', Material.NETHERITE_INGOT);

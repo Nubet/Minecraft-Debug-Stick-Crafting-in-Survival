@@ -8,7 +8,8 @@ import pl.nubet.debugstickinsurvival.config.ConfigurationManager;
 /**
  * Service responsible for providing information about Debug Stick capabilities.
  */
-public class DebugStickCapabilityService {
+public class DebugStickCapabilityService
+{
 
     private final ConfigurationManager configurationManager;
 

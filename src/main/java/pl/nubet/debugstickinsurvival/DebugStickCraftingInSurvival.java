@@ -13,7 +13,8 @@ import java.util.logging.Level;
 /**
  * Main plugin class
  */
-public final class DebugStickCraftingInSurvival extends JavaPlugin {
+public final class DebugStickCraftingInSurvival extends JavaPlugin
+{
 
     private ConfigurationManager configurationManager;
     private BlockRestrictionService blockRestrictionService;
@@ -64,7 +65,7 @@ public final class DebugStickCraftingInSurvival extends JavaPlugin {
 
     private void registerEventListeners() {
         DebugStickInteractionListener interactionListener =
-                new DebugStickInteractionListener(blockRestrictionService, capabilityService, configurationManager);
+            new DebugStickInteractionListener(blockRestrictionService, capabilityService, configurationManager);
         getServer().getPluginManager().registerEvents(interactionListener, this);
     }
 

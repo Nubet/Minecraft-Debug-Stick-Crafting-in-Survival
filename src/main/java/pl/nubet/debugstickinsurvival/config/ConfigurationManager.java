@@ -13,7 +13,8 @@ import java.util.stream.Collectors;
 /**
  * Manages plugin configuration and provides access to configuration values.
  */
-public class ConfigurationManager {
+public class ConfigurationManager
+{
 
     private final JavaPlugin plugin;
     private FileConfiguration config;
@@ -47,9 +48,9 @@ public class ConfigurationManager {
         List<String> blockNames = config.getStringList("excluded_blocks");
 
         this.excludedBlocks = blockNames.stream()
-                .map(this::parseMaterial)
-                .filter(material -> material != null)
-                .collect(Collectors.toSet());
+            .map(this::parseMaterial)
+            .filter(material -> material != null)
+            .collect(Collectors.toSet());
     }
 
     private Material parseMaterial(String materialName) {
@@ -57,18 +58,18 @@ public class ConfigurationManager {
             return Material.valueOf(materialName.toUpperCase());
         } catch (IllegalArgumentException e) {
             plugin.getLogger().log(Level.WARNING,
-                    "Invalid material in config: " + materialName + ". Skipping...");
+                "Invalid material in config: " + materialName + ". Skipping...");
             return null;
         }
     }
 
     private void loadMessages() {
         this.restrictionMessage = config.getString("messages.restriction",
-                "§cYou cannot use the Debug Stick on this type of block!");
+            "§cYou cannot use the Debug Stick on this type of block!");
         this.waterlogRestrictionMessage = config.getString("messages.waterlog_restriction",
-                "§cYou don't have permission to waterlog blocks with the Debug Stick!");
+            "§cYou don't have permission to waterlog blocks with the Debug Stick!");
         this.slabDoublingRestrictionMessage = config.getString("messages.slab_doubling_restriction",
-                "§cYou don't have permission to create double slabs with the Debug Stick!");
+            "§cYou don't have permission to create double slabs with the Debug Stick!");
     }
 
     private void loadFeatureToggles() {

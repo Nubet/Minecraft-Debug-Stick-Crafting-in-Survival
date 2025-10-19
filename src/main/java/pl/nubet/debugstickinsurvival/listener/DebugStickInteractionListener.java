@@ -35,6 +35,10 @@ public class DebugStickInteractionListener implements Listener {
     // Store block states before Debug Stick interaction
     private final Map<UUID, BlockSnapshot> blockSnapshots = new HashMap<>();
 
+    // Cooldown system to prevent spam clicking (150ms = 3 ticks)
+    private final Map<UUID, Long> playerCooldowns = new HashMap<>();
+    private static final long COOLDOWN_MS = 150;
+
     public DebugStickInteractionListener(BlockRestrictionService blockRestrictionService,
                                          DebugStickCapabilityService capabilityService,
                                          ConfigurationManager configurationManager) {
@@ -45,7 +49,7 @@ public class DebugStickInteractionListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (!isDebugStickRightClick(event)) {
+        if (!isDebugStickClick(event)) {
             return;
         }
 
@@ -55,6 +59,16 @@ public class DebugStickInteractionListener implements Listener {
         }
 
         Player player = event.getPlayer();
+        UUID playerId = player.getUniqueId();
+
+        // Check cooldown
+        if (isOnCooldown(playerId)) {
+            event.setCancelled(true);
+            return;
+        }
+
+        // Set cooldown
+        setCooldown(playerId);
 
         // Check block type restrictions (complete block)
         if (configurationManager.areRestrictionsEnabled()) {
@@ -76,7 +90,7 @@ public class DebugStickInteractionListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteractMonitor(PlayerInteractEvent event) {
-        if (!isDebugStickRightClick(event)) {
+        if (!isDebugStickClick(event)) {
             return;
         }
 
@@ -155,8 +169,9 @@ public class DebugStickInteractionListener implements Listener {
         }.runTaskLater(event.getPlayer().getServer().getPluginManager().getPlugin("DebugStickCraftingInSurvival"), 1L);
     }
 
-    private boolean isDebugStickRightClick(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+    private boolean isDebugStickClick(PlayerInteractEvent event) {
+        Action action = event.getAction();
+        if (action != Action.RIGHT_CLICK_BLOCK && action != Action.LEFT_CLICK_BLOCK) {
             return false;
         }
 
@@ -164,6 +179,20 @@ public class DebugStickInteractionListener implements Listener {
         ItemStack item = player.getInventory().getItemInMainHand();
 
         return item != null && item.getType() == Material.DEBUG_STICK;
+    }
+
+    private boolean isOnCooldown(UUID playerId) {
+        if (!playerCooldowns.containsKey(playerId)) {
+            return false;
+        }
+
+        long lastUse = playerCooldowns.get(playerId);
+        long currentTime = System.currentTimeMillis();
+        return (currentTime - lastUse) < COOLDOWN_MS;
+    }
+
+    private void setCooldown(UUID playerId) {
+        playerCooldowns.put(playerId, System.currentTimeMillis());
     }
 
     private void captureBlockState(Player player, Block block) {
