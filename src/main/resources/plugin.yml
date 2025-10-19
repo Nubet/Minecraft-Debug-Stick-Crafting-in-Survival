@@ -15,6 +15,28 @@ commands:
     aliases: [dsreload, debugreload]
 
 permissions:
+  # Native permissions - REQUIRED for Debug Stick to work!
+  minecraft.debugstick:
+    description: Allows using the Debug Stick.
+    default: true
+  minecraft.debugstick.always:
+    description: Allows using the Debug Stick in Survival mode.
+    default: true
+
+  # Plugin-specific permissions
   debugstickcs.reload:
     description: Allows reloading the plugin configuration.
     default: op
+  debugstickcs.waterlog:
+    description: Allows waterlogging blocks with the Debug Stick.
+    default: op
+  debugstickcs.doubleslab:
+    description: Allows creating double slabs with the Debug Stick.
+    default: op
+  debugstickcs.*:
+    description: Grants all Debug Stick plugin permissions (not Minecraft permissions).
+    default: op
+    children:
+      debugstickcs.reload: true
+      debugstickcs.waterlog: true
+      debugstickcs.doubleslab: true

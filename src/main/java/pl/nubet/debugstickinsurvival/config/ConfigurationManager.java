@@ -19,8 +19,13 @@ public class ConfigurationManager {
     private FileConfiguration config;
     private Set<Material> excludedBlocks;
     private String restrictionMessage;
+    private String waterlogRestrictionMessage;
+    private String slabDoublingRestrictionMessage;
     private boolean enableCrafting;
     private boolean enableRestrictions;
+    private boolean enableCapabilityRestrictions;
+    private boolean enableWaterloggingRestriction;
+    private boolean enableSlabDoublingRestriction;
 
     public ConfigurationManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -60,11 +65,18 @@ public class ConfigurationManager {
     private void loadMessages() {
         this.restrictionMessage = config.getString("messages.restriction",
                 "§cYou cannot use the Debug Stick on this type of block!");
+        this.waterlogRestrictionMessage = config.getString("messages.waterlog_restriction",
+                "§cYou don't have permission to waterlog blocks with the Debug Stick!");
+        this.slabDoublingRestrictionMessage = config.getString("messages.slab_doubling_restriction",
+                "§cYou don't have permission to create double slabs with the Debug Stick!");
     }
 
     private void loadFeatureToggles() {
         this.enableCrafting = config.getBoolean("features.enable_crafting", true);
         this.enableRestrictions = config.getBoolean("features.enable_restrictions", true);
+        this.enableCapabilityRestrictions = config.getBoolean("features.enable_capability_restrictions", true);
+        this.enableWaterloggingRestriction = config.getBoolean("features.restrict_waterlogging", true);
+        this.enableSlabDoublingRestriction = config.getBoolean("features.restrict_slab_doubling", true);
     }
 
     public Set<Material> getExcludedBlocks() {
@@ -75,6 +87,14 @@ public class ConfigurationManager {
         return restrictionMessage;
     }
 
+    public String getWaterlogRestrictionMessage() {
+        return waterlogRestrictionMessage;
+    }
+
+    public String getSlabDoublingRestrictionMessage() {
+        return slabDoublingRestrictionMessage;
+    }
+
     public boolean isCraftingEnabled() {
         return enableCrafting;
     }
@@ -83,8 +103,19 @@ public class ConfigurationManager {
         return enableRestrictions;
     }
 
+    public boolean areCapabilityRestrictionsEnabled() {
+        return enableCapabilityRestrictions;
+    }
+
+    public boolean isWaterloggingRestrictionEnabled() {
+        return enableWaterloggingRestriction;
+    }
+
+    public boolean isSlabDoublingRestrictionEnabled() {
+        return enableSlabDoublingRestriction;
+    }
+
     public void reload() {
         loadConfiguration();
     }
 }
-

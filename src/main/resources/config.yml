@@ -8,124 +8,76 @@ features:
   # Enable or disable Debug Stick crafting recipe
   enable_crafting: true
 
-  # Enable or disable Debug Stick usage restrictions
+  # Enable or disable Debug Stick usage restrictions on specific blocks
+  # If a block is in excluded_blocks, it will be COMPLETELY blocked regardless of permissions
   enable_restrictions: true
+
+  # Enable or disable capability restrictions (waterlogging, slab doubling)
+  # These work ONLY if the block is NOT in excluded_blocks
+  # This allows fine-grained control: block the action, but allow other properties
+  enable_capability_restrictions: true
+
+  # Restrict waterlogging blocks without permission
+  # Permission: debugstickcs.waterlog
+  # Note: If you want to COMPLETELY block waterlogging, add waterloggable blocks to excluded_blocks instead
+  restrict_waterlogging: true
+
+  # Restrict creating double slabs without permission
+  # Permission: debugstickcs.doubleslab
+  restrict_slab_doubling: true
 
 # Messages shown to players
 messages:
-  # Message shown when a player tries to use Debug Stick on a restricted block
   restriction: "§cYou cannot use the Debug Stick on this type of block!"
 
-# List of blocks where Debug Stick usage is restricted
-# Add or remove material names as needed
+  waterlog_restriction: "§cYou don't have permission to waterlog blocks with the Debug Stick!"
+
+  slab_doubling_restriction: "§cYou don't have permission to create double slabs with the Debug Stick!"
+
+# List of blocks where Debug Stick usage is COMPLETELY BLOCKED
+# Players cannot modify ANY properties of these blocks with Debug Stick
 excluded_blocks:
+
+  # Infrastructure & Game Mechanics
   - COMPOSTER
+  - CHEST
+  - TRAPPED_CHEST
+  - ENDER_CHEST
+  - END_PORTAL_FRAME
+  - END_PORTAL
+  - PISTON
+  - PISTON_HEAD
+  - SPAWNER
+
+  # Blocks that can be 'duped' or exploited
   - CACTUS
   - KELP
   - SUGAR_CANE
+  - TURTLE_EGG
   - GRASS_BLOCK
-  - ACACIA_LEAVES
-  - AZALEA_LEAVES
-  - BIRCH_LEAVES
-  - DARK_OAK_LEAVES
-  - FLOWERING_AZALEA_LEAVES
-  - JUNGLE_LEAVES
-  - MANGROVE_LEAVES
-  - OAK_LEAVES
-  - SPRUCE_LEAVES
+  - CAKE
+  - SWEET_BERRY_BUSH
+  - BEE_NEST
+  - BEEHIVE
+  - SNOW
+
+  # Seeds & Crops
+  - BEETROOT_SEEDS
+  - MELON_SEEDS
+  - PUMPKIN_SEEDS
+  - WHEAT_SEEDS
+
+  # Decorative plants
   - BIG_DRIPLEAF
   - BIG_DRIPLEAF_STEM
   - CHORUS_FLOWER
   - CHORUS_FRUIT
   - CHORUS_PLANT
   - SEA_PICKLE
+
+  # Technical blocks
   - RESPAWN_ANCHOR
-  - ACACIA_TRAPDOOR
-  - BIRCH_TRAPDOOR
-  - DARK_OAK_TRAPDOOR
-  - JUNGLE_TRAPDOOR
-  - MANGROVE_TRAPDOOR
-  - OAK_TRAPDOOR
-  - SPRUCE_TRAPDOOR
-  - WARPED_TRAPDOOR
-  - CRIMSON_TRAPDOOR
   - TRIPWIRE_HOOK
-  - TURTLE_EGG
-  - BEE_NEST
-  - BEEHIVE
-  - CAKE
-  - SWEET_BERRY_BUSH
-  - BEETROOT_SEEDS
-  - MELON_SEEDS
-  - PUMPKIN_SEEDS
-  - WHEAT_SEEDS
-  - CHEST
-  - END_PORTAL_FRAME
-  - END_PORTAL
-  - PISTON
-  - PISTON_HEAD
-  - SNOW
   - SCULK_SENSOR
   - SCULK_SHRIEKER
-  - ACACIA_SLAB
-  - ANDESITE_SLAB
-  - BIRCH_SLAB
-  - BLACKSTONE_SLAB
-  - BRICK_SLAB
-  - COBBLED_DEEPSLATE_SLAB
-  - COBBLESTONE_SLAB
-  - CRIMSON_SLAB
-  - CUT_COPPER_SLAB
-  - CUT_RED_SANDSTONE_SLAB
-  - CUT_SANDSTONE_SLAB
-  - DARK_OAK_SLAB
-  - DARK_PRISMARINE_SLAB
-  - DEEPSLATE_TILE_SLAB
-  - DIORITE_SLAB
-  - END_STONE_BRICK_SLAB
-  - EXPOSED_CUT_COPPER_SLAB
-  - GRANITE_SLAB
-  - JUNGLE_SLAB
-  - MANGROVE_SLAB
-  - MOSSY_STONE_BRICK_SLAB
-  - MUD_BRICK_SLAB
-  - NETHER_BRICK_SLAB
-  - OAK_SLAB
-  - OXIDIZED_CUT_COPPER_SLAB
-  - PETRIFIED_OAK_SLAB
-  - POLISHED_ANDESITE_SLAB
-  - POLISHED_BLACKSTONE_BRICK_SLAB
-  - POLISHED_BLACKSTONE_SLAB
-  - POLISHED_DEEPSLATE_SLAB
-  - POLISHED_DIORITE_SLAB
-  - PRISMARINE_BRICK_SLAB
-  - PRISMARINE_SLAB
-  - PURPUR_SLAB
-  - QUARTZ_SLAB
-  - RED_NETHER_BRICK_SLAB
-  - RED_SANDSTONE_SLAB
-  - SANDSTONE_SLAB
-  - SMOOTH_QUARTZ_SLAB
-  - SMOOTH_RED_SANDSTONE_SLAB
-  - SMOOTH_STONE_SLAB
-  - SPRUCE_SLAB
-  - STONE_BRICK_SLAB
-  - STONE_SLAB
-  - WARPED_SLAB
-  - WAXED_CUT_COPPER_SLAB
-  - WAXED_EXPOSED_CUT_COPPER_SLAB
-  - WAXED_OXIDIZED_CUT_COPPER_SLAB
-  - WAXED_WEATHERED_CUT_COPPER_SLAB
-  - WEATHERED_CUT_COPPER_SLAB
-  # 1.20 Cherry
-  - CHERRY_LEAVES
-  - CHERRY_TRAPDOOR
-  - CHERRY_SLAB
-  # 1.20 Bamboo
-  - BAMBOO_TRAPDOOR
-  - BAMBOO_SLAB
-  - BAMBOO_MOSAIC_SLAB
-  # 1.21 Pale Oak
-  - PALE_OAK_LEAVES
-  - PALE_OAK_TRAPDOOR
-  - PALE_OAK_SLAB
+

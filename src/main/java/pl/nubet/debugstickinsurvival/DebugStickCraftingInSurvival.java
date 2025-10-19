@@ -6,6 +6,7 @@ import pl.nubet.debugstickinsurvival.config.ConfigurationManager;
 import pl.nubet.debugstickinsurvival.listener.DebugStickInteractionListener;
 import pl.nubet.debugstickinsurvival.recipe.DebugStickRecipeManager;
 import pl.nubet.debugstickinsurvival.service.BlockRestrictionService;
+import pl.nubet.debugstickinsurvival.service.DebugStickCapabilityService;
 
 import java.util.logging.Level;
 
@@ -16,6 +17,7 @@ public final class DebugStickCraftingInSurvival extends JavaPlugin {
 
     private ConfigurationManager configurationManager;
     private BlockRestrictionService blockRestrictionService;
+    private DebugStickCapabilityService capabilityService;
     private DebugStickRecipeManager recipeManager;
 
     @Override
@@ -52,6 +54,7 @@ public final class DebugStickCraftingInSurvival extends JavaPlugin {
 
     private void initializeServices() {
         this.blockRestrictionService = new BlockRestrictionService(configurationManager);
+        this.capabilityService = new DebugStickCapabilityService(configurationManager);
     }
 
     private void registerRecipes() {
@@ -61,7 +64,7 @@ public final class DebugStickCraftingInSurvival extends JavaPlugin {
 
     private void registerEventListeners() {
         DebugStickInteractionListener interactionListener =
-                new DebugStickInteractionListener(blockRestrictionService, configurationManager);
+                new DebugStickInteractionListener(blockRestrictionService, capabilityService, configurationManager);
         getServer().getPluginManager().registerEvents(interactionListener, this);
     }
 
