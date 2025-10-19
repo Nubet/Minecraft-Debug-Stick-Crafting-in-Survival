@@ -24,3 +24,5 @@ coverage/
 .coverage
 .cache
 *.md
+
+target/
