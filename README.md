@@ -102,5 +102,8 @@ pl.nubet.debugstickinsurvival/
 ## 📝 Changelog
 See `CHANGELOG.md` for full history.
 
+## 🔗 Links
+- [SpigotMC](https://www.spigotmc.org/resources/debug-stick-in-survival.102837/)
+- [Modrinth](https://modrinth.com/plugin/debug-stick-in-survival)
 ---
 Made with ❤️ by Nubet ️
