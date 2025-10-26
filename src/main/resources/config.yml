@@ -22,6 +22,12 @@ features:
   # Note: If you want to COMPLETELY block waterlogging, add waterloggable blocks to excluded_blocks instead
   restrict_waterlogging: true
 
+  # Restrict waterlogging in the Nether separately
+  # Permission: debugstickcs.waterlog.nether
+  # If true, requires separate permission for waterlogging in Nether dimension
+  # If false, uses the same permission as overworld (debugstickcs.waterlog)
+  restrict_nether_waterlogging: true
+
   # Restrict creating double slabs without permission
   # Permission: debugstickcs.doubleslab
   restrict_slab_doubling: true
@@ -31,6 +37,8 @@ messages:
   restriction: "§cYou cannot use the Debug Stick on this type of block!"
 
   waterlog_restriction: "§cYou don't have permission to waterlog blocks with the Debug Stick!"
+
+  nether_waterlog_restriction: "§cYou don't have permission to waterlog blocks in the Nether!"
 
   slab_doubling_restriction: "§cYou don't have permission to create double slabs with the Debug Stick!"
 
@@ -80,4 +88,3 @@ excluded_blocks:
   - TRIPWIRE_HOOK
   - SCULK_SENSOR
   - SCULK_SHRIEKER
-

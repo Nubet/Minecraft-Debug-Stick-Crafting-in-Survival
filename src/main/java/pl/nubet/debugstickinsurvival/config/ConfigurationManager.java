@@ -21,11 +21,13 @@ public class ConfigurationManager
     private Set<Material> excludedBlocks;
     private String restrictionMessage;
     private String waterlogRestrictionMessage;
+    private String netherWaterlogRestrictionMessage;
     private String slabDoublingRestrictionMessage;
     private boolean enableCrafting;
     private boolean enableRestrictions;
     private boolean enableCapabilityRestrictions;
     private boolean enableWaterloggingRestriction;
+    private boolean enableNetherWaterloggingRestriction;
     private boolean enableSlabDoublingRestriction;
 
     public ConfigurationManager(JavaPlugin plugin) {
@@ -68,6 +70,8 @@ public class ConfigurationManager
             "§cYou cannot use the Debug Stick on this type of block!");
         this.waterlogRestrictionMessage = config.getString("messages.waterlog_restriction",
             "§cYou don't have permission to waterlog blocks with the Debug Stick!");
+        this.netherWaterlogRestrictionMessage = config.getString("messages.nether_waterlog_restriction",
+            "§cYou don't have permission to waterlog blocks in the Nether with the Debug Stick!");
         this.slabDoublingRestrictionMessage = config.getString("messages.slab_doubling_restriction",
             "§cYou don't have permission to create double slabs with the Debug Stick!");
     }
@@ -77,6 +81,7 @@ public class ConfigurationManager
         this.enableRestrictions = config.getBoolean("features.enable_restrictions", true);
         this.enableCapabilityRestrictions = config.getBoolean("features.enable_capability_restrictions", true);
         this.enableWaterloggingRestriction = config.getBoolean("features.restrict_waterlogging", true);
+        this.enableNetherWaterloggingRestriction = config.getBoolean("features.restrict_nether_waterlogging", true);
         this.enableSlabDoublingRestriction = config.getBoolean("features.restrict_slab_doubling", true);
     }
 
@@ -90,6 +95,10 @@ public class ConfigurationManager
 
     public String getWaterlogRestrictionMessage() {
         return waterlogRestrictionMessage;
+    }
+
+    public String getNetherWaterlogRestrictionMessage() {
+        return netherWaterlogRestrictionMessage;
     }
 
     public String getSlabDoublingRestrictionMessage() {
@@ -110,6 +119,10 @@ public class ConfigurationManager
 
     public boolean isWaterloggingRestrictionEnabled() {
         return enableWaterloggingRestriction;
+    }
+
+    public boolean isNetherWaterloggingRestrictionEnabled() {
+        return enableNetherWaterloggingRestriction;
     }
 
     public boolean isSlabDoublingRestrictionEnabled() {

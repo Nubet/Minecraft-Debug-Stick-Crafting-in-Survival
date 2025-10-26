@@ -1,6 +1,7 @@
 package pl.nubet.debugstickinsurvival.listener;
 
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
@@ -26,7 +27,8 @@ import java.util.UUID;
  * Instead of blocking the entire action, it allows property changes but reverts
  * restricted capabilities (waterlogging, slab doubling).
  */
-public class DebugStickInteractionListener implements Listener {
+public class DebugStickInteractionListener implements Listener
+{
 
     private final BlockRestrictionService blockRestrictionService;
     private final DebugStickCapabilityService capabilityService;
@@ -40,8 +42,8 @@ public class DebugStickInteractionListener implements Listener {
     private static final long COOLDOWN_MS = 150;
 
     public DebugStickInteractionListener(BlockRestrictionService blockRestrictionService,
-                                         DebugStickCapabilityService capabilityService,
-                                         ConfigurationManager configurationManager) {
+        DebugStickCapabilityService capabilityService,
+        ConfigurationManager configurationManager) {
         this.blockRestrictionService = blockRestrictionService;
         this.capabilityService = capabilityService;
         this.configurationManager = configurationManager;
@@ -108,7 +110,8 @@ public class DebugStickInteractionListener implements Listener {
         }
 
         // Schedule check on next tick (after Debug Stick has modified the block)
-        new BukkitRunnable() {
+        new BukkitRunnable()
+        {
             @Override
             public void run() {
                 BlockSnapshot snapshot = blockSnapshots.remove(playerId);
@@ -122,47 +125,32 @@ public class DebugStickInteractionListener implements Listener {
 
                 // Check if restricted properties were changed
                 boolean revertNeeded = false;
-                boolean waterlogChanged = false;
-                boolean slabChanged = false;
+                String restrictionMessage = null;
 
                 // Check waterlogging change
-                if (configurationManager.isWaterloggingRestrictionEnabled()) {
-                    if (oldData instanceof Waterlogged oldWaterlogged && newData instanceof Waterlogged newWaterlogged) {
-                        if (oldWaterlogged.isWaterlogged() != newWaterlogged.isWaterlogged()) {
-                            if (!player.hasPermission("debugstickcs.waterlog")) {
-                                // Revert waterlogged state
-                                newWaterlogged.setWaterlogged(oldWaterlogged.isWaterlogged());
-                                revertNeeded = true;
-                                waterlogChanged = true;
-                            }
-                        }
+                if (shouldCheckWaterlogging(oldData, newData)) {
+                    WaterlogPermissionResult waterlogResult = checkWaterlogPermission(player, block.getWorld());
+                    if (!waterlogResult.hasPermission()) {
+                        revertWaterlogging((Waterlogged) oldData, (Waterlogged) newData);
+                        revertNeeded = true;
+                        restrictionMessage = waterlogResult.getMessage();
                     }
                 }
 
                 // Check slab doubling change
-                if (configurationManager.isSlabDoublingRestrictionEnabled()) {
-                    if (oldData instanceof Slab oldSlab && newData instanceof Slab newSlab) {
-                        // Check if trying to change to DOUBLE
-                        if (oldSlab.getType() != Slab.Type.DOUBLE && newSlab.getType() == Slab.Type.DOUBLE) {
-                            if (!player.hasPermission("debugstickcs.doubleslab")) {
-                                // Revert slab type
-                                newSlab.setType(oldSlab.getType());
-                                revertNeeded = true;
-                                slabChanged = true;
-                            }
-                        }
+                if (shouldCheckSlabDoubling(oldData, newData)) {
+                    if (!player.hasPermission("debugstickcs.doubleslab")) {
+                        revertSlabDoubling((Slab) oldData, (Slab) newData);
+                        revertNeeded = true;
+                        restrictionMessage = configurationManager.getSlabDoublingRestrictionMessage();
                     }
                 }
 
                 // Apply reverted data and notify player
                 if (revertNeeded) {
                     block.setBlockData(newData, false);
-
-                    if (waterlogChanged) {
-                        player.sendMessage(configurationManager.getWaterlogRestrictionMessage());
-                    }
-                    if (slabChanged) {
-                        player.sendMessage(configurationManager.getSlabDoublingRestrictionMessage());
+                    if (restrictionMessage != null) {
+                        player.sendMessage(restrictionMessage);
                     }
                 }
             }
@@ -206,16 +194,84 @@ public class DebugStickInteractionListener implements Listener {
         player.sendMessage(message);
     }
 
+    private boolean isNetherWorld(World world) {
+        return world.getEnvironment() == org.bukkit.World.Environment.NETHER;
+    }
+
+    private boolean shouldCheckWaterlogging(BlockData oldData, BlockData newData) {
+        return configurationManager.isWaterloggingRestrictionEnabled() &&
+            oldData instanceof Waterlogged oldWaterlogged && newData instanceof Waterlogged newWaterlogged &&
+            oldWaterlogged.isWaterlogged() != newWaterlogged.isWaterlogged();
+    }
+
+    private boolean shouldCheckSlabDoubling(BlockData oldData, BlockData newData) {
+        return configurationManager.isSlabDoublingRestrictionEnabled() &&
+            oldData instanceof Slab oldSlab && newData instanceof Slab newSlab &&
+            oldSlab.getType() != Slab.Type.DOUBLE && newSlab.getType() == Slab.Type.DOUBLE;
+    }
+
+    private WaterlogPermissionResult checkWaterlogPermission(Player player, World world) {
+        boolean isNether = isNetherWorld(world);
+        boolean hasPermission;
+
+        if (isNether && configurationManager.isNetherWaterloggingRestrictionEnabled()) {
+            hasPermission = player.hasPermission("debugstickcs.waterlog.nether");
+            String message = configurationManager.getNetherWaterlogRestrictionMessage();
+            return hasPermission ? WaterlogPermissionResult.allowed() : WaterlogPermissionResult.denied(message);
+        }
+        else {
+            hasPermission = player.hasPermission("debugstickcs.waterlog");
+            String message = configurationManager.getWaterlogRestrictionMessage();
+            return hasPermission ? WaterlogPermissionResult.allowed() : WaterlogPermissionResult.denied(message);
+        }
+    }
+
+    private void revertWaterlogging(Waterlogged oldWaterlogged, Waterlogged newWaterlogged) {
+        newWaterlogged.setWaterlogged(oldWaterlogged.isWaterlogged());
+    }
+
+    private void revertSlabDoubling(Slab oldSlab, Slab newSlab) {
+        newSlab.setType(oldSlab.getType());
+    }
+
     /**
      * Stores a snapshot of block state before Debug Stick interaction
      */
-    private static class BlockSnapshot {
+    private static class BlockSnapshot
+    {
         final Block block;
         final BlockData blockData;
 
         BlockSnapshot(Block block, BlockData blockData) {
             this.block = block;
             this.blockData = blockData;
+        }
+    }
+
+    private static class WaterlogPermissionResult
+    {
+        private final boolean allowed;
+        private final String message;
+
+        private WaterlogPermissionResult(boolean allowed, String message) {
+            this.allowed = allowed;
+            this.message = message;
+        }
+
+        public static WaterlogPermissionResult allowed() {
+            return new WaterlogPermissionResult(true, null);
+        }
+
+        public static WaterlogPermissionResult denied(String message) {
+            return new WaterlogPermissionResult(false, message);
+        }
+
+        public boolean hasPermission() {
+            return allowed;
+        }
+
+        public String getMessage() {
+            return message;
         }
     }
 }
