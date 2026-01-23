@@ -22,28 +22,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Handles player interactions with the Debug Stick and enforces usage restrictions.
- * Instead of blocking the entire action, it allows property changes but reverts
- * restricted capabilities (waterlogging, slab doubling).
- */
 public class DebugStickInteractionListener implements Listener
 {
-
     private final BlockRestrictionService blockRestrictionService;
     private final DebugStickCapabilityService capabilityService;
     private final ConfigurationManager configurationManager;
 
-    // Store block states before Debug Stick interaction
     private final Map<UUID, BlockSnapshot> blockSnapshots = new HashMap<>();
 
-    // Cooldown system to prevent spam clicking (150ms = 3 ticks)
     private final Map<UUID, Long> playerCooldowns = new HashMap<>();
     private static final long COOLDOWN_MS = 150;
 
-    public DebugStickInteractionListener(BlockRestrictionService blockRestrictionService,
+    public DebugStickInteractionListener(
+        BlockRestrictionService blockRestrictionService,
         DebugStickCapabilityService capabilityService,
-        ConfigurationManager configurationManager) {
+        ConfigurationManager configurationManager
+    ) {
         this.blockRestrictionService = blockRestrictionService;
         this.capabilityService = capabilityService;
         this.configurationManager = configurationManager;
@@ -63,24 +57,19 @@ public class DebugStickInteractionListener implements Listener
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
 
-        // Check cooldown
         if (isOnCooldown(playerId)) {
             event.setCancelled(true);
             return;
         }
 
-        // Set cooldown
         setCooldown(playerId);
 
-        // Check block type restrictions (complete block)
-        if (configurationManager.areRestrictionsEnabled()) {
-            if (!blockRestrictionService.isUsageAllowed(clickedBlock)) {
-                handleBlockRestriction(event, player);
-                return;
-            }
+        if (configurationManager.areRestrictionsEnabled()
+            && !blockRestrictionService.isUsageAllowed(clickedBlock)) {
+            handleBlockRestriction(event, player);
+            return;
         }
 
-        // For capability restrictions, capture state before change
         if (configurationManager.areCapabilityRestrictionsEnabled()) {
             captureBlockState(player, clickedBlock);
         }
@@ -88,7 +77,7 @@ public class DebugStickInteractionListener implements Listener
 
     /**
      * Monitor block changes after Debug Stick interaction
-     * Priority MONITOR means this runs AFTER the Debug Stick has changed the block
+     * (Reverts restricted capabilities on the next tick)
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteractMonitor(PlayerInteractEvent event) {
@@ -104,12 +93,11 @@ public class DebugStickInteractionListener implements Listener
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
 
-        // Skip if no snapshot (means restrictions are disabled or block was completely blocked)
         if (!blockSnapshots.containsKey(playerId)) {
             return;
         }
 
-        // Schedule check on next tick (after Debug Stick has modified the block)
+        // Next tick ensures we see post-change BlockData.
         new BukkitRunnable()
         {
             @Override
@@ -123,11 +111,9 @@ public class DebugStickInteractionListener implements Listener
                 BlockData oldData = snapshot.blockData;
                 BlockData newData = block.getBlockData();
 
-                // Check if restricted properties were changed
                 boolean revertNeeded = false;
                 String restrictionMessage = null;
 
-                // Check waterlogging change
                 if (shouldCheckWaterlogging(oldData, newData)) {
                     WaterlogPermissionResult waterlogResult = checkWaterlogPermission(player, block.getWorld());
                     if (!waterlogResult.hasPermission()) {
@@ -137,7 +123,6 @@ public class DebugStickInteractionListener implements Listener
                     }
                 }
 
-                // Check slab doubling change
                 if (shouldCheckSlabDoubling(oldData, newData)) {
                     if (!player.hasPermission("debugstickcs.doubleslab")) {
                         revertSlabDoubling((Slab) oldData, (Slab) newData);
@@ -146,7 +131,6 @@ public class DebugStickInteractionListener implements Listener
                     }
                 }
 
-                // Apply reverted data and notify player
                 if (revertNeeded) {
                     block.setBlockData(newData, false);
                     if (restrictionMessage != null) {
@@ -154,7 +138,10 @@ public class DebugStickInteractionListener implements Listener
                     }
                 }
             }
-        }.runTaskLater(event.getPlayer().getServer().getPluginManager().getPlugin("DebugStickCraftingInSurvival"), 1L);
+        }.runTaskLater(
+            event.getPlayer().getServer().getPluginManager().getPlugin("DebugStickCraftingInSurvival"),
+            1L
+        );
     }
 
     private boolean isDebugStickClick(PlayerInteractEvent event) {
@@ -165,18 +152,15 @@ public class DebugStickInteractionListener implements Listener
 
         Player player = event.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
-
         return item != null && item.getType() == Material.DEBUG_STICK;
     }
 
     private boolean isOnCooldown(UUID playerId) {
-        if (!playerCooldowns.containsKey(playerId)) {
+        Long lastUse = playerCooldowns.get(playerId);
+        if (lastUse == null) {
             return false;
         }
-
-        long lastUse = playerCooldowns.get(playerId);
-        long currentTime = System.currentTimeMillis();
-        return (currentTime - lastUse) < COOLDOWN_MS;
+        return (System.currentTimeMillis() - lastUse) < COOLDOWN_MS;
     }
 
     private void setCooldown(UUID playerId) {
@@ -190,37 +174,38 @@ public class DebugStickInteractionListener implements Listener
 
     private void handleBlockRestriction(PlayerInteractEvent event, Player player) {
         event.setCancelled(true);
-        String message = blockRestrictionService.getRestrictionMessage();
-        player.sendMessage(message);
+        player.sendMessage(blockRestrictionService.getRestrictionMessage());
     }
 
     private boolean isNetherWorld(World world) {
-        return world.getEnvironment() == org.bukkit.World.Environment.NETHER;
+        return world.getEnvironment() == World.Environment.NETHER;
     }
 
     private boolean shouldCheckWaterlogging(BlockData oldData, BlockData newData) {
-        return configurationManager.isWaterloggingRestrictionEnabled() &&
-            oldData instanceof Waterlogged oldWaterlogged && newData instanceof Waterlogged newWaterlogged &&
-            oldWaterlogged.isWaterlogged() != newWaterlogged.isWaterlogged();
+        return configurationManager.isWaterloggingRestrictionEnabled()
+            && oldData instanceof Waterlogged oldWaterlogged
+            && newData instanceof Waterlogged newWaterlogged
+            && oldWaterlogged.isWaterlogged() != newWaterlogged.isWaterlogged();
     }
 
     private boolean shouldCheckSlabDoubling(BlockData oldData, BlockData newData) {
-        return configurationManager.isSlabDoublingRestrictionEnabled() &&
-            oldData instanceof Slab oldSlab && newData instanceof Slab newSlab &&
-            oldSlab.getType() != Slab.Type.DOUBLE && newSlab.getType() == Slab.Type.DOUBLE;
+        return configurationManager.isSlabDoublingRestrictionEnabled()
+            && oldData instanceof Slab oldSlab
+            && newData instanceof Slab newSlab
+            && oldSlab.getType() != Slab.Type.DOUBLE
+            && newSlab.getType() == Slab.Type.DOUBLE;
     }
 
     private WaterlogPermissionResult checkWaterlogPermission(Player player, World world) {
         boolean isNether = isNetherWorld(world);
-        boolean hasPermission;
 
         if (isNether && configurationManager.isNetherWaterloggingRestrictionEnabled()) {
-            hasPermission = player.hasPermission("debugstickcs.waterlog.nether");
+            boolean hasPermission = player.hasPermission("debugstickcs.waterlog.nether");
             String message = configurationManager.getNetherWaterlogRestrictionMessage();
             return hasPermission ? WaterlogPermissionResult.allowed() : WaterlogPermissionResult.denied(message);
         }
         else {
-            hasPermission = player.hasPermission("debugstickcs.waterlog");
+            boolean hasPermission = player.hasPermission("debugstickcs.waterlog");
             String message = configurationManager.getWaterlogRestrictionMessage();
             return hasPermission ? WaterlogPermissionResult.allowed() : WaterlogPermissionResult.denied(message);
         }
@@ -234,9 +219,6 @@ public class DebugStickInteractionListener implements Listener
         newSlab.setType(oldSlab.getType());
     }
 
-    /**
-     * Stores a snapshot of block state before Debug Stick interaction
-     */
     private static class BlockSnapshot
     {
         final Block block;
