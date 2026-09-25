@@ -1,7 +1,7 @@
 name: DebugStickCraftingInSurvival
 main: pl.nubet.debugstickinsurvival.DebugStickCraftingInSurvival
 version: ${project.version}
-api-version: 1.21
+api-version: '26.1'
 authors:
   - Nubet
 description: Minecraft plugin which allows crafting Debug Stick in survival mode with restrictions.

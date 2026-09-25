@@ -11,8 +11,8 @@ Plugin allows to craft "Debug Stick" in survival mode
 
 ## 📋 Requirements
 
-- Minecraft server: 1.21+ (Spigot or Paper)
-- Java: JDK 21+
+- Minecraft server: 26.1+ (Spigot or Paper)
+- Java: JDK 25+
 
 ## 🔧 Installation
 
@@ -67,7 +67,7 @@ excluded_blocks:
 ## 🔨 Build from source
 
 Requirements:
-- JDK 21+
+- JDK 25+
 - Maven 3.6+
 
 Build:
@@ -75,10 +75,29 @@ Build:
 mvn clean package
 ~~~
 
+## 🚀 Release
+
+Releases are built and published automatically by GitHub Actions. To publish a
+new version:
+
+1. Update `<version>` in `pom.xml`.
+2. Commit the version and changelog changes.
+3. Push a tag with the exact Maven version prefixed by `v`:
+
+~~~bash
+git tag v2.1.4-26.x
+git push origin v2.1.4-26.x
+~~~
+
+The workflow runs `mvn clean verify`, checks that the tag matches `pom.xml`,
+and attaches the resulting JAR to the GitHub Release. Pull requests and pushes
+to `main` run the build and verification steps without publishing a release.
+
 ## 🔌 Compatibility
 
 | Plugin Version | Minecraft | Java | API |
 |----------------|-----------|------|-----|
+| 2.1.4+         | 26.1+     | 25+  | 26.1|
 | 2.1.0+         | 1.21+     | 21+  | 1.21|
 | 1.x            | 1.19.x    | 8+   | 1.19|
 

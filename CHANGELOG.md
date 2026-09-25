@@ -1,5 +1,15 @@
 # Changelog – Debug Stick Crafting in Survival
 
+## [2.1.4-26.x] – September 25, 2026
+
+### Compatibility
+- **Minecraft:** 26.1+
+- **Java:** 25+
+- **API:** 26.1
+
+This release contains no source-code changes. It rebuilds the existing plugin
+against the 26.1 API for Minecraft 26.1+ servers.
+
 ## [2.1.3-1.21] – October 26, 2025
 
 ### Added

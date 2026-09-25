@@ -1,0 +1,83 @@
+name: Build and Release
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+env:
+  JAVA_VERSION: '25'
+
+jobs:
+  build:
+    name: Build plugin
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Check whitespace
+        run: git diff --check
+
+      - name: Build and verify
+        run: mvn --batch-mode --no-transfer-progress clean verify
+
+      - name: Read Maven version
+        id: project
+        shell: bash
+        run: echo "version=$(mvn --batch-mode --no-transfer-progress help:evaluate -Dexpression=project.version -q -DforceStdout)" >> "$GITHUB_OUTPUT"
+
+      - name: Validate release tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        env:
+          TAG_VERSION: ${{ github.ref_name }}
+          PROJECT_VERSION: ${{ steps.project.outputs.version }}
+        run: |
+          test "${TAG_VERSION#v}" = "$PROJECT_VERSION" || {
+            echo "Tag ${TAG_VERSION} must match pom.xml version ${PROJECT_VERSION}."
+            exit 1
+          }
+
+      - name: Upload release artifact
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-jar
+          path: target/DebugStickCraftingInSurvival-${{ steps.project.outputs.version }}.jar
+          if-no-files-found: error
+          retention-days: 1
+
+  release:
+    name: Publish GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download release artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: plugin-jar
+          path: dist
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" dist/*.jar --title "${{ github.ref_name }}" --generate-notes
